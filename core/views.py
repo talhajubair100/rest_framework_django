@@ -19,10 +19,10 @@ class CustomerViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
-        # obj = self.get_object()
-        # serializer = CustomerSerializer(obj)
-        # return Response(serializer.data)
-        return HttpResponseNotAllowed('not allowed')
+        obj = self.get_object()
+        serializer = CustomerSerializer(obj)
+        return Response(serializer.data)
+        #return HttpResponseNotAllowed('not allowed')
     
     def create(self, request, *args, **kwargs):
         data = request.data
@@ -60,6 +60,12 @@ class CustomerViewSet(viewsets.ModelViewSet):
         customer.save()
         serializer = CustomerSerializer(customer)
         return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        customer = self.get_object()
+        customer.delete()
+
+        return Response("object remove")
 
 
 class ProfessionViewSet(viewsets.ModelViewSet):
