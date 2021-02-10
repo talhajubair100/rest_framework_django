@@ -18,6 +18,11 @@ class CustomerViewSet(viewsets.ModelViewSet):
         serializer = CustomerSerializer(customers, many=True)
         return Response(serializer.data)
 
+    def retrieve(self, request, *args, **kwargs):
+        obj = self.get_object()
+        serializer = CustomerSerializer(obj)
+        return Response(serializer.data)
+
 class ProfessionViewSet(viewsets.ModelViewSet):
     queryset = Profession.objects.all()
     serializer_class = ProfessionSerializer
