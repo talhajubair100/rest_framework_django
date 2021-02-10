@@ -33,6 +33,27 @@ class CustomerViewSet(viewsets.ModelViewSet):
         serializer = CustomerSerializer(customer)
         return Response(serializer.data)
 
+    def update(self, request, *args, **kwargs):
+        customer = self.get_object()
+        data = request.data
+        customer.name = data['name']
+        customer.address = data['address']
+        customer.data_sheet_id = data['data_sheet']
+
+        profession = Profession.objects.get(id=data['profession'])
+
+        for p in customer.profession.all():
+            customer.profession.remove(p)
+
+        customer.profession.add(profession)
+        customer.save()
+        serializer = CustomerSerializer(customer)
+        return Response(serializer.data)
+
+
+
+
+
 class ProfessionViewSet(viewsets.ModelViewSet):
     queryset = Profession.objects.all()
     serializer_class = ProfessionSerializer
