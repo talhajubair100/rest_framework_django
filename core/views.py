@@ -4,6 +4,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
 from .serializers import CustomerSerializer, ProfessionSerializer, DataSheetSerializer, DocumentSerializer
+from rest_framework.decorators import action
 from django.http.response import HttpResponseNotAllowed
 
 # Create your views here.
@@ -14,7 +15,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
         return active_customer
     
     def list(self, request, *args, **kwargs):
-        customers = Customer.objects.filter(id=3)
+        customers = Customer.objects.all()
         serializer = CustomerSerializer(customers, many=True)
         return Response(serializer.data)
 
@@ -61,11 +62,61 @@ class CustomerViewSet(viewsets.ModelViewSet):
         serializer = CustomerSerializer(customer)
         return Response(serializer.data)
 
+    
     def destroy(self, request, *args, **kwargs):
         customer = self.get_object()
         customer.delete()
 
         return Response("object remove")
+
+
+    @action(detail=True)
+    def deactivate(self, request, *args, **kwargs):
+        customer = self.get_object()
+        customer.active = False
+        customer.save()
+
+        serializer = CustomerSerializer(customer)
+        return Response(serializer.data)
+
+
+    # @action(detail=True)
+    # def activate(self, request, *args, **kwargs):
+    #     customer = self.get_object()
+    #     print(customer)
+    #     customer.active = True
+    #     customer.save()
+    #     serializer = CustomerSerializer(customer)
+    #     return Response(serializer.data)
+
+    @action(detail=False)
+    def deactivate_all(self, request, *args, **kwargs):
+        customers = Customer.objects.all()
+        customers.update(active=False)
+        
+        serialzer = CustomerSerializer(customers, many=True)
+        return Response(serialzer.data)
+
+    
+    @action(detail=False)
+    def activate_all(self, request, *args, **kwargs):
+        customers = Customer.objects.all()
+        customers.update(active=True)
+        
+        serialzer = CustomerSerializer(customers, many=True)
+        return Response(serialzer.data)
+
+
+    @action(detail=False, methods=['POST'])
+    def chg_status(self, request, *args, **kwargs):
+        status = True if request.data['active'] == 'True' else False
+
+        customers = Customer.objects.all()
+        customers.update(active=status)
+
+        serialzer = CustomerSerializer(customers, many=True)
+        return Response(serialzer.data)
+
 
 
 class ProfessionViewSet(viewsets.ModelViewSet):
