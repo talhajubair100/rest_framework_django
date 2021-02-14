@@ -23,6 +23,13 @@ class Customer(models.Model):
     data_sheet = models.OneToOneField(DataSheet, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
 
+    @property
+    def status_message(self):
+        if self.active:
+            return "customer active"
+        else:
+            return "customer not active"
+
     def __str__(self):
         return self.name
 

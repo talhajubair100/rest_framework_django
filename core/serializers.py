@@ -6,7 +6,7 @@ from .models import Customer, Profession, DataSheet, Document
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ('name', 'address', 'profession', 'data_sheet', 'active')
+        fields = ('name', 'address', 'profession', 'data_sheet', 'active', 'status_message')
 
 
 class ProfessionSerializer(serializers.ModelSerializer):
