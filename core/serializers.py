@@ -5,12 +5,20 @@ from .models import Customer, Profession, DataSheet, Document
 
 class CustomerSerializer(serializers.ModelSerializer):
     number_profession = serializers.SerializerMethodField()
+    #data_sheet = serializers.StringRelatedField()
+    data_sheet = serializers.SerializerMethodField()
+    profession = serializers.StringRelatedField(many=True)
+    document_set = serializers.StringRelatedField(many=True)
+
     class Meta:
         model = Customer
-        fields = ('name', 'address', 'profession', 'data_sheet', 'active', 'status_message', 'number_profession')
+        fields = ('name', 'address', 'profession', 'data_sheet', 'active', 'status_message', 'number_profession', 'document_set')
 
     def get_number_profession(self, obj):
         return obj.num_profesion()
+
+    def get_data_sheet(self, obj):
+        return obj.data_sheet.description
 
 class ProfessionSerializer(serializers.ModelSerializer):
     class Meta:
