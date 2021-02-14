@@ -7,14 +7,15 @@ from .serializers import CustomerSerializer, ProfessionSerializer, DataSheetSeri
 from rest_framework.decorators import action
 from django.http.response import HttpResponseNotAllowed
 from django_filters.rest_framework import DjangoFilterBackend
-
+from rest_framework.filters import SearchFilter
 
 # Create your views here.
 class CustomerViewSet(viewsets.ModelViewSet):
     serializer_class = CustomerSerializer
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_fields = ['address']
+    search_fields = ['name', 'address', 'data_sheet__description']
     def get_queryset(self):
         address = self.request.query_params.get('address', None)
 
