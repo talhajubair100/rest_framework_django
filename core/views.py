@@ -11,11 +11,23 @@ from django.http.response import HttpResponseNotAllowed
 class CustomerViewSet(viewsets.ModelViewSet):
     serializer_class = CustomerSerializer
     def get_queryset(self):
-        active_customer = Customer.objects.filter(active=True)
-        return active_customer
+        address = self.request.query_params.get('address', None)
+
+        if self.request.query_params.get('active') == 'False':
+            status = False
+        else:
+            status = True
+
+        #status = True if self.request.query_params['active'] == 'True' else False
+
+        if address:
+            customer = Customer.objects.filter(address__icontains=address, active=status)
+        else:
+            customer = Customer.objects.filter(active=status)
+        return customer
     
     def list(self, request, *args, **kwargs):
-        customers = Customer.objects.all()
+        customers = self.get_queryset()
         serializer = CustomerSerializer(customers, many=True)
         return Response(serializer.data)
 
@@ -91,7 +103,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
     @action(detail=False)
     def deactivate_all(self, request, *args, **kwargs):
-        customers = Customer.objects.all()
+        customers = self.get_queryset()
         customers.update(active=False)
         
         serialzer = CustomerSerializer(customers, many=True)
@@ -100,7 +112,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
     
     @action(detail=False)
     def activate_all(self, request, *args, **kwargs):
-        customers = Customer.objects.all()
+        customers = self.get_queryset()
         customers.update(active=True)
         
         serialzer = CustomerSerializer(customers, many=True)
@@ -111,7 +123,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
     def chg_status(self, request, *args, **kwargs):
         status = True if request.data['active'] == 'True' else False
 
-        customers = Customer.objects.all()
+        customers = self.get_queryset()
         customers.update(active=status)
 
         serialzer = CustomerSerializer(customers, many=True)
