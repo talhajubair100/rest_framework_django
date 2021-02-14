@@ -10,6 +10,8 @@ from django.http.response import HttpResponseNotAllowed
 # Create your views here.
 class CustomerViewSet(viewsets.ModelViewSet):
     serializer_class = CustomerSerializer
+
+    filterset_fields = ['address']
     def get_queryset(self):
         address = self.request.query_params.get('address', None)
 
@@ -26,10 +28,10 @@ class CustomerViewSet(viewsets.ModelViewSet):
             customer = Customer.objects.filter(active=status)
         return customer
     
-    def list(self, request, *args, **kwargs):
-        customers = self.get_queryset()
-        serializer = CustomerSerializer(customers, many=True)
-        return Response(serializer.data)
+    # def list(self, request, *args, **kwargs):
+    #     customers = self.get_queryset()
+    #     serializer = CustomerSerializer(customers, many=True)
+    #     return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
         obj = self.get_object()
