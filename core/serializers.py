@@ -4,10 +4,13 @@ from rest_framework import serializers
 from .models import Customer, Profession, DataSheet, Document
 
 class CustomerSerializer(serializers.ModelSerializer):
+    number_profession = serializers.SerializerMethodField()
     class Meta:
         model = Customer
-        fields = ('name', 'address', 'profession', 'data_sheet', 'active', 'status_message')
+        fields = ('name', 'address', 'profession', 'data_sheet', 'active', 'status_message', 'number_profession')
 
+    def get_number_profession(self, obj):
+        return obj.num_profesion()
 
 class ProfessionSerializer(serializers.ModelSerializer):
     class Meta:

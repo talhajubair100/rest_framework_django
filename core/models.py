@@ -29,6 +29,10 @@ class Customer(models.Model):
             return "customer active"
         else:
             return "customer not active"
+    
+
+    def num_profesion(self):
+        return self.profession.all().count()
 
     def __str__(self):
         return self.name
