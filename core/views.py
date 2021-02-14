@@ -18,6 +18,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
     search_fields = ['name', 'address', 'data_sheet__description']
     ordering_fields = ['id', 'name']
     ordering = ['-id']
+    lookup_field = 'id'
 
     def get_queryset(self):
         address = self.request.query_params.get('address', None)
